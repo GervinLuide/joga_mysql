@@ -6,8 +6,8 @@ const path = require('path')
 // add template engine
 const hbs = require('express-handlebars');
 //setup template engine directory and files extensions
-app.set('views', path.join(__dirname, 'views'));
-app.set('views engine', 'hbs');
+app.set('views', path.join(__dirname, 'views/layouts'));
+app.set('view engine', 'hbs');
 app.engine('hbs', hbs.engine({
     extname: 'hbs',
     defaultLayout: 'main',
@@ -45,7 +45,21 @@ app.get('/', (req,res) =>{
             articles:articles
         })
     })
-})
+});
+
+//show article by this slug
+app.get('/article/:slug', (req,res) =>{
+    let query = `SELECT * FROM article WHERE slug="${req.params.slug}"`
+    let article
+    con.query(query, (err, result) =>{
+        if(err) throw err;
+        article = result
+        console.log(article)
+        res.render('article',{
+            article:article
+        })
+    });
+});
 
 // app start point
 app.listen(3000, () => {
