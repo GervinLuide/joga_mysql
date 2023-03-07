@@ -1,4 +1,4 @@
-const con = require('../utilities/db')
+const con = require('../utilities/db');
 
 const getAllArticles = (req,res) => {
     let query = 'SELECT * FROM article';
