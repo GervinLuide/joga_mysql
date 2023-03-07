@@ -26,7 +26,7 @@ var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "qwerty",
-    database: " joga_mysql"
+    database: "joga_mysql"
 })
 
 con.connect(function (err) {
@@ -35,31 +35,32 @@ con.connect(function (err) {
 })
 
 // show all articles -index page
-app.get('/', (req,res) =>{
-    let query = 'SELECT * FROM article';
-    let articles = []
-    con.query(query, (err,result)=>{
-        if(err) throw err;
-        articles = result
-        res.render('index', {
-            articles:articles
-        })
-    })
-});
+const articleRoutes = require('./routes/article');
+app.use('/', articleRoutes)
+app.use('/article', articleRoutes)
+
 
 //show article by this slug
-app.use('/article/:slug', (req,res) =>{
-    let query = `SELECT * , article.name as article_name, author.name as author_name FROM article JOIN author on article.author_id = author.id WHERE slug="${req.params.slug}"`
-    let article
+app.get('/author/:author_ID', (req,res) =>{
+    let query = `SELECT * FROM author WHERE id="${req.params.author_ID}}"`
+    let author = []
     con.query(query, (err, result) =>{
         if(err) throw err;
-        article = result
-        console.log(article)
-        res.render('article',{
-            article:article
+        author = result
+        console.log(author)
+        query = `SELECT * FROM article WHERE author_id="${req.params.author_ID}}"`
+        let articles = []
+        con.query(query, (err, result) => {
+            if (err) throw err;
+            articles = result
+            console.log(articles)
+            res.render('author', {
+                author: author,
+                articles: articles
+            })
         })
-    });
-});
+    })
+})
 
 // app start point
 app.listen(3000, () => {
